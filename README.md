@@ -1,6 +1,6 @@
 The `set_span` in the simulation process macro
 
-This macro can be used to optimize error messages, etc
+This macro can be used to improve error messages, etc
 
 # Note
 Incorrect use may cause some damage to hygiene
