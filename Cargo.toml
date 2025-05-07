@@ -1,0 +1,19 @@
+[package]
+name = "set-span"
+version = "0.1.0"
+edition = "2021"
+
+authors = ["A4-Tacks <wdsjxhno1001@163.com>"]
+keywords = ["setspan", "span", "hygiene", "proc-macro", "macros"]
+categories = ["no-std", "no-std::no-alloc"]
+description = "Like proc-macro, set some tokens span"
+
+license = "MIT"
+repository = "https://github.com/A4-Tacks/set-span-rs"
+readme = "README.md"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro-tool = "0.7.0"
