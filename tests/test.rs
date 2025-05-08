@@ -18,10 +18,13 @@ fn main() {
     set_span::set_span!(x, {
         let a = "".to_owned();
     });
-    set_span::set_span!([(((x)))][0][0][0], {
+    set_span::set_span!([(((x)))][0u8][0i32][0], {
         #set_span(
-            dbg!(a);
+            dbg!(&a);
         )
+        #set_index_span([0] {
+            dbg!(a);
+        })
     });
     foo!(1);
 }
