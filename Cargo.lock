@@ -10,7 +10,7 @@ checksum = "cd636891b714d740761fe70d031bdf3729a873aae85febb39cfbba0e1afb5117"
 
 [[package]]
 name = "set-span"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "proc-macro-tool",
 ]

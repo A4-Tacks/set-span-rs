@@ -13,10 +13,8 @@ macro_rules! foo {
         foo! { ($t) ($t) }
     };
     ($t:tt (0)) => {
-        set_span::set_span! {$t[0], {
-            #set_span {
-                compile_error! {"input by zero"}
-            }
+        set_span::set_span_all! {$t[0], {
+            compile_error! {"input by zero"}
         }}
     };
     ($_:tt ($lit:literal)) => { /*...*/ };
@@ -30,7 +28,7 @@ Output:
 error: input by zero
   --> src/lib.rs:25:6
    |
-18 | foo!(0);
+16 | foo!(0);
    |      ^
 ```
 
