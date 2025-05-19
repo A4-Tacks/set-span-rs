@@ -10,11 +10,9 @@ use proc_macro_tool::{
 };
 
 fn eoi(iter: impl IntoIterator<Item = TT>) -> Result<(), TokenStream> {
-    if let Some(tt) = iter.into_iter().next() {
+    iter.into_iter().next().map_or(Ok(()), |tt| {
         Err(err("unexpected token, expected end of input", tt))
-    } else {
-        Ok(())
-    }
+    })
 }
 
 fn fmt(g: Group) -> String {
@@ -39,7 +37,7 @@ impl StrExt for str {
                 return s;
             }
         }
-        return self;
+        self
     }
 }
 
@@ -154,6 +152,25 @@ fn set_span_impl(input: TokenStream) -> Result<TokenStream, TokenStream> {
     do_operation(input, span)
 }
 
+fn set_span_all_impl(input: TokenStream) -> Result<TokenStream, TokenStream> {
+    let iter = &mut input.parse_iter();
+    let spant = iter.next()
+        .ok_or_else(|| err!("unexpected end of input, expected any token"))?;
+    let spant = index_tt(spant, iter)?;
+
+    iter.next_puncts(",");
+
+    let result = iter.next()
+        .ok_or_else(|| err!("unexpected end of input, expected {...}", Span::call_site()))?
+        .into_group()
+        .map_err(|t| err!("expected {...}", t))?
+        .stream()
+        .walk(|tt| tt.set_spaned(spant.span()));
+    eoi(iter)?;
+
+    Ok(result)
+}
+
 /// Set the span of certain tokens in the code block to the span of the input token
 ///
 /// - grammar := span `,` `{` code\* `}`
@@ -194,4 +211,26 @@ fn set_span_impl(input: TokenStream) -> Result<TokenStream, TokenStream> {
 #[proc_macro]
 pub fn set_span(input: TokenStream) -> TokenStream {
     set_span_impl(input).unwrap_or_else(identity)
+}
+
+/// Like `set_span!(tt[0], {#set_span{...}})`
+///
+/// # Example
+/// ```
+/// macro_rules! foo {
+///     ($t:tt) => {
+///         foo! { ($t) ($t) }
+///     };
+///     ($t:tt (0)) => {
+///         set_span::set_span_all! {$t[0], {
+///             compile_error! {"input by zero"}
+///         }}
+///     };
+///     ($_:tt ($lit:literal)) => { /*...*/ };
+/// }
+/// // foo!(0); // test error msg
+/// ```
+#[proc_macro]
+pub fn set_span_all(input: TokenStream) -> TokenStream {
+    set_span_all_impl(input).unwrap_or_else(identity)
 }

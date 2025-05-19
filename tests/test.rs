@@ -14,7 +14,8 @@ macro_rules! foo {
     };
 }
 
-fn main() {
+#[test]
+fn test() {
     set_span::set_span!(x, {
         let a = "".to_owned();
     });
